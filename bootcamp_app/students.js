@@ -8,11 +8,14 @@ const pool = new Pool({
   host: 'localhost',
   database: 'bootcampx'
 });
+const queryString = `SELECT students.id as student_id,students.name as student_name,cohorts.name as cohort_name  FROM  students JOIN cohorts ON cohort_id = cohorts.id
+WHERE cohorts.name LIKE $1
+LIMIT $2`;
+const cohortName = avg[0];
+const limit = avg[1] || 5;
+const values = [`%${cohortName}`,limit];
 
-
-pool.query(`SELECT students.id as student_id,students.name as student_name,cohorts.name as cohort_name  FROM  students JOIN cohorts ON cohort_id = cohorts.id
-WHERE cohorts.name LIKE '%${avg[0]}%'
-LIMIT ${avg[1] || 5};`)
+pool.query(queryString,values)
   .then(res=>{
     res.rows.forEach(user => {
       console.log(`${user.student_name} has an id of ${user.student_id} and was in the ${user.cohort_name} cohort`);
